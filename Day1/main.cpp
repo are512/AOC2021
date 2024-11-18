@@ -3,17 +3,26 @@
 #include <array>
 #include <algorithm>
 #include <numeric>
+#include <cstdint>
 
-int main() {
+#define WINDOW_SIZE 3
+
+int main(int argc, char **argv) {
     // Read the input file into a buffer
-    std::ifstream file("./input.txt");
-    auto prev = INT_MAX; //Set this to be max possible value so comparison to check if the value increases is ok
-    auto current = -1; // Set this to an integer so that auto works?
-    auto increases_indiv= 0; // Counter for if the individual depths increase (Part 1)
-    auto increases_window = 0; // Counter for if the window depths increase (Part 2)
-    std::array<int, 3> window; // std::array to hold a window of values
+    std::ifstream file(argv[argc - 1]);
+    uint32_t prev = INT_MAX; //Set this to be max possible value so comparison to check if the value increases is ok
+    uint32_t current; // Set this to an integer
+    uint32_t increases_indiv = 0; // Counter for if the individual depths increase (Part 1)
+    uint32_t increases_window = 0; // Counter for if the window depths increase (Part 2)
+    std::array<uint32_t, WINDOW_SIZE> window; // std::array to hold a window of values
     window.fill(-1); // fill with -1 to ensure that comparisons to check we have a valid window is ok
     auto window_old = window; // Create an object to hold the old version of the window so that comparisons can be done easily
+
+    if(!file.is_open()){
+        std::cout << "Error opening file." << std::endl;
+        return EXIT_FAILURE;
+    }
+
     // This for loop goes along the read file and pulls each line into a variable as a string
     for ( std::string line; std::getline(file, line); ) {
         // This converts the string to an integer and puts it into the variable
@@ -38,6 +47,7 @@ int main() {
         // Now we have done our calculations, we set our old window to be the current one in preperation for the next loop itteraration
         window_old = window;
     }
+    file.close();
     std::cout << "Number of increases is: " << increases_indiv << std::endl;
     std::cout << "Number of window increases is: " << increases_window << std::endl;
     return 0;
